@@ -1,0 +1,284 @@
+:root {
+  --primary: #131921;
+  --secondary: #232f3e;
+  --accent: #febd69;
+  --bg: #f3f3f3;
+  --card: #fff;
+  --text: #111;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.top-header {
+  background: var(--primary);
+  color: #fff;
+  display: grid;
+  grid-template-columns: 160px 140px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 16px;
+}
+
+.logo {
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.logo span {
+  color: var(--accent);
+}
+
+.location {
+  font-size: 0.85rem;
+}
+
+.search-box {
+  display: flex;
+  width: 100%;
+}
+
+.search-box select,
+.search-box input,
+.search-box button,
+.header-actions button,
+.controls select,
+.nav-link,
+.product-actions button,
+.checkout-btn,
+.auth-form button,
+.order-btn,
+.secondary-btn {
+  border: 0;
+  font-size: 0.9rem;
+}
+
+.search-box select,
+.search-box input,
+.search-box button {
+  padding: 10px;
+}
+
+.search-box select {
+  border-radius: 6px 0 0 6px;
+}
+
+.search-box input {
+  flex: 1;
+}
+
+.search-box button {
+  background: var(--accent);
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.header-actions button {
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  border: 1px solid #fff3;
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+
+.main-nav {
+  display: flex;
+  gap: 6px;
+  background: var(--secondary);
+  padding: 8px 16px;
+}
+
+.nav-link {
+  background: transparent;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.nav-link.active,
+.nav-link:hover {
+  background: #fff2;
+}
+
+.hero {
+  background: linear-gradient(120deg, #bfe5ff, #f8f8f8);
+  padding: 18px 16px;
+}
+
+.controls {
+  padding: 12px 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.controls select {
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  padding: 0 16px 20px;
+}
+
+.product-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px #00000014;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-name {
+  margin: 2px 0;
+  font-size: 1rem;
+}
+
+.product-category {
+  margin: 0;
+  text-transform: capitalize;
+  color: #555;
+  font-size: 0.82rem;
+}
+
+.product-price,
+.product-rating {
+  margin: 0;
+}
+
+.product-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.product-actions button {
+  flex: 1;
+  padding: 9px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.add-cart-btn {
+  background: #ffd814;
+}
+
+.buy-now-btn,
+.checkout-btn,
+.auth-form button,
+.order-btn {
+  background: #ffa41c;
+}
+
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(420px, 100%);
+  height: 100vh;
+  background: #fff;
+  box-shadow: -6px 0 15px #00000029;
+  padding: 12px;
+  overflow: auto;
+  z-index: 5;
+}
+
+.hidden {
+  display: none;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-header button {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.cart-item,
+.order-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.auth-form {
+  display: grid;
+  gap: 10px;
+}
+
+.auth-form input,
+.auth-form select {
+  padding: 9px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+}
+
+.checkout-btn,
+.order-btn,
+.secondary-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.secondary-btn {
+  background: #e7e7e7;
+}
+
+.badge {
+  background: #eaf7ff;
+  border: 1px solid #b9ddf5;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 0.8rem;
+  display: inline-block;
+}
+
+@media (max-width: 900px) {
+  .top-header {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
+  }
+}
