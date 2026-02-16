@@ -1,0 +1,207 @@
+:root {
+  --bg: #f1f3f6;
+  --surface: #fff;
+  --brand-dark: #131a22;
+  --brand-mid: #232f3e;
+  --accent: #ff9900;
+  --accent-2: #ffd814;
+  --text: #111;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.topbar {
+  background: var(--brand-dark);
+  color: #fff;
+  display: grid;
+  grid-template-columns: 160px 130px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 16px;
+}
+.brand { font-size: 1.6rem; font-weight: 800; }
+.brand span { color: var(--accent); }
+.deliver { font-size: .85rem; }
+
+.search-wrap { display: flex; min-width: 240px; }
+.search-wrap select, .search-wrap input, .search-wrap button {
+  border: none;
+  padding: 10px;
+}
+.search-wrap select { border-radius: 6px 0 0 6px; }
+.search-wrap input { flex: 1; }
+.search-wrap button {
+  border-radius: 0 6px 6px 0;
+  background: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.top-actions button {
+  border: 1px solid #ffffff44;
+  background: transparent;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.menu {
+  background: var(--brand-mid);
+  padding: 8px 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.menu-item {
+  background: transparent;
+  color: #fff;
+  border: 0;
+  padding: 7px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.menu-item.active, .menu-item:hover { background: #ffffff22; }
+
+.hero {
+  background: linear-gradient(120deg, #d5ebff, #fff6e8);
+  padding: 18px 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.hero h1 { margin: 0 0 8px; }
+.hero p { margin: 0; color: #333; }
+.hero-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.badge {
+  background: #fff;
+  border: 1px solid #d7e9ff;
+  border-radius: 999px;
+  font-size: .8rem;
+  padding: 5px 10px;
+}
+
+.toolbar {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  border: 1px solid #c8ced7;
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.chip.active { background: #e9f5ff; border-color: #87c6ff; }
+
+.product-grid {
+  padding: 0 16px 18px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 1px 8px #00000014;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.product-image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.pill {
+  font-size: .72rem;
+  width: fit-content;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #ecf8ff;
+  color: #256b8b;
+}
+.product-name { margin: 3px 0; font-size: .95rem; min-height: 38px; }
+.product-rating, .stock, .product-price { margin: 0; }
+.product-price { font-weight: 700; }
+.stock { color: #058a3b; font-size: .85rem; }
+
+.card-actions { display: flex; gap: 8px; margin-top: auto; }
+.card-actions button {
+  flex: 1;
+  border: none;
+  border-radius: 7px;
+  padding: 9px;
+  cursor: pointer;
+}
+.cart-action { background: var(--accent-2); }
+.buy-action { background: #ffa41c; }
+
+.footer {
+  text-align: center;
+  background: #131a22;
+  color: #dde8f1;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(440px, 100%);
+  background: #fff;
+  box-shadow: -6px 0 20px #0000002f;
+  padding: 12px;
+  overflow: auto;
+  z-index: 20;
+}
+.hidden { display: none; }
+.side-head { display: flex; justify-content: space-between; align-items: center; }
+.side-head button { border: 0; background: transparent; font-size: 1.1rem; cursor: pointer; }
+
+.panel-list-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 7px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ececec;
+  align-items: center;
+}
+
+.form-grid { display: grid; gap: 10px; }
+.form-grid input, .form-grid select {
+  padding: 10px;
+  border: 1px solid #bcc6d2;
+  border-radius: 6px;
+}
+.primary-btn, .muted-btn {
+  border: 0;
+  border-radius: 6px;
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+.primary-btn { background: #ffa41c; }
+.muted-btn { background: #ebedf0; }
+
+@media (max-width: 920px) {
+  .topbar { grid-template-columns: 1fr; }
+}

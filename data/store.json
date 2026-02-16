@@ -1,0 +1,170 @@
+{
+  "users": [],
+  "products": [
+    {
+      "id": 1,
+      "name": "Noise Cancelling Headphones",
+      "category": "electronics",
+      "price": 8999,
+      "rating": 4.6,
+      "stock": 18,
+      "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 2,
+      "name": "Smart LED TV 50\"",
+      "category": "electronics",
+      "price": 32999,
+      "rating": 4.3,
+      "stock": 5,
+      "image": "https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 3,
+      "name": "Gaming Keyboard",
+      "category": "electronics",
+      "price": 2799,
+      "rating": 4.4,
+      "stock": 22,
+      "image": "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 4,
+      "name": "5G Smartphone Pro",
+      "category": "mobiles",
+      "price": 44999,
+      "rating": 4.7,
+      "stock": 9,
+      "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 5,
+      "name": "Budget Smartphone X",
+      "category": "mobiles",
+      "price": 11999,
+      "rating": 4.1,
+      "stock": 31,
+      "image": "https://images.unsplash.com/photo-1512499617640-c2f999098c01?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 6,
+      "name": "Wireless Power Bank",
+      "category": "mobiles",
+      "price": 1699,
+      "rating": 4.2,
+      "stock": 27,
+      "image": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 7,
+      "name": "Atomic Habits",
+      "category": "books",
+      "price": 499,
+      "rating": 4.8,
+      "stock": 44,
+      "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 8,
+      "name": "Clean Code",
+      "category": "books",
+      "price": 699,
+      "rating": 4.7,
+      "stock": 17,
+      "image": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 9,
+      "name": "Kids Story Bundle",
+      "category": "books",
+      "price": 899,
+      "rating": 4.5,
+      "stock": 13,
+      "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 10,
+      "name": "Basmati Rice 10kg",
+      "category": "groceries",
+      "price": 1199,
+      "rating": 4.4,
+      "stock": 62,
+      "image": "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 11,
+      "name": "Cold Pressed Oil",
+      "category": "groceries",
+      "price": 349,
+      "rating": 4.3,
+      "stock": 48,
+      "image": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 12,
+      "name": "Organic Fruit Box",
+      "category": "groceries",
+      "price": 799,
+      "rating": 4.2,
+      "stock": 19,
+      "image": "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 13,
+      "name": "Men Casual Shirt",
+      "category": "fashion",
+      "price": 999,
+      "rating": 4.1,
+      "stock": 38,
+      "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 14,
+      "name": "Women Sneakers",
+      "category": "fashion",
+      "price": 2399,
+      "rating": 4.5,
+      "stock": 21,
+      "image": "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 15,
+      "name": "Smartwatch Fit+",
+      "category": "electronics",
+      "price": 6999,
+      "rating": 4.6,
+      "stock": 14,
+      "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 16,
+      "name": "Bluetooth Speaker",
+      "category": "electronics",
+      "price": 2499,
+      "rating": 4.3,
+      "stock": 35,
+      "image": "https://images.unsplash.com/photo-1589003077984-894e133dabab?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 17,
+      "name": "Study Lamp",
+      "category": "electronics",
+      "price": 1299,
+      "rating": 4,
+      "stock": 29,
+      "image": "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=600&q=80"
+    },
+    {
+      "id": 18,
+      "name": "Instant Noodles Pack",
+      "category": "groceries",
+      "price": 299,
+      "rating": 4.2,
+      "stock": 57,
+      "image": "https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=600&q=80"
+    }
+  ],
+  "carts": {},
+  "orders": {},
+  "sessions": {}
+}
