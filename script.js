@@ -1,3 +1,12 @@
+const state = {
+  token: localStorage.getItem('afkartToken') || null,
+  user: JSON.parse(localStorage.getItem('afkartUser') || 'null'),
+  filterCategory: 'all',
+  query: '',
+  sortBy: 'featured',
+  products: [],
+  cart: { items: [], subtotal: 0 },
+  orders: []
 const products = [
   { id: 1, name: 'Noise Cancelling Headphones', category: 'electronics', price: 8999, rating: 4.6, stock: 18, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80' },
   { id: 2, name: 'Smart LED TV 50"', category: 'electronics', price: 32999, rating: 4.3, stock: 5, image: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&q=80' },
@@ -42,6 +51,27 @@ const chipsNode = document.getElementById('quickCategoryChips');
 const money = value => `₹${value.toLocaleString('en-IN')}`;
 const stars = rating => `⭐ ${rating.toFixed(1)}`;
 
+function persistAuth() {
+  if (state.token) localStorage.setItem('afkartToken', state.token);
+  else localStorage.removeItem('afkartToken');
+
+  if (state.user) localStorage.setItem('afkartUser', JSON.stringify(state.user));
+  else localStorage.removeItem('afkartUser');
+}
+
+async function api(path, options = {}) {
+  const res = await fetch(path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(state.token ? { Authorization: `Bearer ${state.token}` } : {}),
+      ...(options.headers || {})
+    }
+  });
+
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || 'Request failed');
+  return body;
 function persist() {
   localStorage.setItem('afkartUser', JSON.stringify(state.user));
   localStorage.setItem('afkartCart', JSON.stringify(state.cart));
@@ -58,16 +88,25 @@ function renderChips() {
       state.filterCategory = category;
       categoryFilter.value = category;
       renderChips();
+      loadProducts();
       renderProducts();
     });
     chipsNode.append(chip);
   });
 }
 
+async function loadProducts() {
+  const params = new URLSearchParams({ category: state.filterCategory, q: state.query, sort: state.sortBy });
+  const data = await api(`/api/products?${params.toString()}`);
+  state.products = data.products;
+  renderProducts();
+}
+
 function renderProducts() {
   const template = document.getElementById('productCardTemplate');
   productGrid.innerHTML = '';
 
+  state.products.forEach(item => {
   let filtered = products.filter(item => {
     const categoryMatch = state.filterCategory === 'all' || item.category === state.filterCategory;
     const queryMatch = item.name.toLowerCase().includes(state.query.toLowerCase());
@@ -92,6 +131,39 @@ function renderProducts() {
     productGrid.append(clone);
   });
 
+  if (!state.products.length) productGrid.innerHTML = '<p>No results. Try another keyword.</p>';
+}
+
+function updateCartCount() {
+  cartCount.textContent = state.cart.items.reduce((sum, item) => sum + item.qty, 0);
+}
+
+async function loadCart() {
+  if (!state.token) {
+    state.cart = { items: [], subtotal: 0 };
+    updateCartCount();
+    return;
+  }
+  state.cart = await api('/api/cart');
+  updateCartCount();
+}
+
+async function addToCart(productId) {
+  if (!state.token) return renderAuthPanel();
+
+  const existing = state.cart.items.find(item => item.productId === productId);
+  const qty = (existing?.qty || 0) + 1;
+  await api('/api/cart', { method: 'POST', body: JSON.stringify({ productId, qty }) });
+  await loadCart();
+}
+
+async function setQty(productId, qty) {
+  if (qty <= 0) {
+    await api(`/api/cart/${productId}`, { method: 'DELETE' });
+  } else {
+    await api('/api/cart', { method: 'POST', body: JSON.stringify({ productId, qty }) });
+  }
+  await loadCart();
   if (!filtered.length) productGrid.innerHTML = '<p>No results. Try another keyword.</p>';
 }
 
@@ -124,6 +196,66 @@ function openPanel(title, html) {
 }
 
 function renderCartPanel() {
+  if (!state.cart.items.length) return openPanel('Your Cart', '<p>Your cart is empty.</p>');
+
+  const list = state.cart.items.map(item => `
+    <div class="panel-list-item">
+      <div>
+        <strong>${item.product.name}</strong><br>Qty: ${item.qty}
+      </div>
+      <span>${money(item.lineTotal)}</span>
+      <div>
+        <button class="muted-btn" onclick="setQty(${item.productId}, ${item.qty - 1})">-</button>
+        <button class="muted-btn" onclick="setQty(${item.productId}, ${item.qty + 1})">+</button>
+      </div>
+    </div>
+  `).join('');
+
+  openPanel(
+    'Your Cart',
+    `${list}
+     <h3>Subtotal: ${money(state.cart.subtotal)}</h3>
+     <button class="primary-btn" onclick="renderCheckout()">Proceed to Checkout</button>`
+  );
+}
+
+function renderCheckout() {
+  if (!state.token) return renderAuthPanel();
+  if (!state.cart.items.length) return openPanel('Checkout', '<p>Your cart is empty.</p>');
+
+  openPanel('Checkout & Payment', `
+    <p>Logged in as <strong>${state.user.name}</strong></p>
+    <p>Total payable: <strong>${money(state.cart.subtotal)}</strong></p>
+    <form id="payForm" class="form-grid">
+      <select required>
+        <option value="">Payment Method</option>
+        <option>UPI</option>
+        <option>Credit/Debit Card</option>
+        <option>Net Banking</option>
+        <option>Cash on Delivery</option>
+      </select>
+      <input id="addressField" required placeholder="Shipping Address"/>
+      <input id="pinField" required placeholder="PIN Code"/>
+      <button class="primary-btn" type="submit">Place Order</button>
+    </form>
+  `);
+
+  document.getElementById('payForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+      await api('/api/orders/checkout', {
+        method: 'POST',
+        body: JSON.stringify({
+          paymentMethod: e.target.querySelector('select').value,
+          address: document.getElementById('addressField').value,
+          pinCode: document.getElementById('pinField').value
+        })
+      });
+      await Promise.all([loadCart(), loadOrders()]);
+      renderOrdersPanel();
+    } catch (error) {
+      alert(error.message);
+    }
   if (!state.cart.length) return openPanel('Your Cart', '<p>Your cart is empty.</p>');
 
   const list = state.cart.map(item => {
@@ -163,6 +295,8 @@ function renderCheckout(subtotal) {
 }
 
 function buyNow(productId) {
+  if (!state.token) return renderAuthPanel();
+  setQty(productId, 1).then(() => renderCheckout());
   state.cart = [{ productId, qty: 1 }];
   persist();
   updateCartCount();
@@ -172,6 +306,64 @@ function buyNow(productId) {
 
 function renderAuthPanel() {
   if (state.user) {
+    return openPanel('Account', `
+      <p><strong>${state.user.name}</strong></p>
+      <p>${state.user.email}</p>
+      <button class="primary-btn" onclick="renderOrdersPanel()">Your Orders</button>
+      <button class="muted-btn" onclick="logout()">Logout</button>
+    `);
+  }
+
+  openPanel('Login / Signup', `
+    <div class="toolbar">
+      <button id="loginTab" class="chip active">Login</button>
+      <button id="registerTab" class="chip">Register</button>
+    </div>
+    <form id="authForm" class="form-grid">
+      <input id="nameField" placeholder="Full Name (Register only)"/>
+      <input id="mailField" required type="email" placeholder="Email"/>
+      <input id="passField" required type="password" placeholder="Password"/>
+      <button class="primary-btn" type="submit">Continue</button>
+    </form>
+  `);
+
+  let mode = 'login';
+  const nameField = document.getElementById('nameField');
+  const loginTab = document.getElementById('loginTab');
+  const registerTab = document.getElementById('registerTab');
+
+  const setMode = next => {
+    mode = next;
+    nameField.style.display = mode === 'register' ? 'block' : 'none';
+    loginTab.classList.toggle('active', mode === 'login');
+    registerTab.classList.toggle('active', mode === 'register');
+  };
+
+  loginTab.addEventListener('click', () => setMode('login'));
+  registerTab.addEventListener('click', () => setMode('register'));
+  setMode('login');
+
+  document.getElementById('authForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const payload = {
+      email: document.getElementById('mailField').value,
+      password: document.getElementById('passField').value
+    };
+    if (mode === 'register') payload.name = nameField.value;
+
+    try {
+      const path = mode === 'register' ? '/api/auth/register' : '/api/auth/login';
+      const data = await api(path, { method: 'POST', body: JSON.stringify(payload) });
+      state.token = data.token;
+      state.user = data.user;
+      authBtn.textContent = 'Logout';
+      persistAuth();
+      await loadCart();
+      await loadOrders();
+      renderAuthPanel();
+    } catch (error) {
+      alert(error.message);
+    }
     return openPanel('Account', `<p><strong>${state.user.name}</strong></p><p>${state.user.email}</p><button class="primary-btn" onclick="renderOrdersPanel()">Your Orders</button><button class="muted-btn" onclick="logout()">Logout</button>`);
   }
 
@@ -189,6 +381,36 @@ function renderAuthPanel() {
 }
 
 function logout() {
+  state.token = null;
+  state.user = null;
+  state.orders = [];
+  state.cart = { items: [], subtotal: 0 };
+  authBtn.textContent = 'Login';
+  persistAuth();
+  updateCartCount();
+  openPanel('Logged out', '<p>You have logged out of AFkart.</p>');
+}
+
+async function loadOrders() {
+  if (!state.token) {
+    state.orders = [];
+    return;
+  }
+  const data = await api('/api/orders');
+  state.orders = data.orders;
+}
+
+function renderOrdersPanel() {
+  if (!state.orders.length) return openPanel('Your Orders', '<p>No orders yet.</p>');
+
+  const html = state.orders.map(order => `
+    <div class="panel-list-item">
+      <div><strong>${order.id}</strong><br>${new Date(order.date).toLocaleString()}</div>
+      <span>${order.items.reduce((s, i) => s + i.qty, 0)} items</span>
+      <span>${money(order.total)}</span>
+    </div>
+  `).join('');
+
   state.user = null;
   authBtn.textContent = 'Login';
   persist();
@@ -213,6 +435,20 @@ function renderMenuInfo(view) {
   openPanel('AFkart Info', views[view]);
 }
 
+categoryFilter.addEventListener('change', e => {
+  state.filterCategory = e.target.value;
+  renderChips();
+  loadProducts();
+});
+searchInput.addEventListener('input', e => {
+  state.query = e.target.value.trim();
+  loadProducts();
+});
+sortSelect.addEventListener('change', e => {
+  state.sortBy = e.target.value;
+  loadProducts();
+});
+document.getElementById('searchBtn').addEventListener('click', loadProducts);
 categoryFilter.addEventListener('change', e => { state.filterCategory = e.target.value; renderChips(); renderProducts(); });
 searchInput.addEventListener('input', e => { state.query = e.target.value.trim(); renderProducts(); });
 sortSelect.addEventListener('change', e => { state.sortBy = e.target.value; renderProducts(); });
@@ -229,6 +465,15 @@ document.querySelectorAll('.menu-item').forEach(btn => btn.addEventListener('cli
   renderMenuInfo(btn.dataset.view);
 }));
 
+async function bootstrap() {
+  if (state.user) authBtn.textContent = 'Logout';
+  renderChips();
+  await loadProducts();
+  await loadCart();
+  await loadOrders();
+}
+
+bootstrap();
 if (state.user) authBtn.textContent = 'Logout';
 renderChips();
 renderProducts();
