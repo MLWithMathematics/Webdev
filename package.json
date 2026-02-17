@@ -1,0 +1,11 @@
+{
+  "name": "afkart-fullstack",
+  "version": "1.0.0",
+  "description": "AFkart full-stack ecommerce demo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "check": "node --check server.js && node --check script.js"
+  }
+}
