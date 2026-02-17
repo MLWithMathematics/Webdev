@@ -89,6 +89,7 @@ function renderProducts() {
 
   state.products.forEach(item => {
     const clone = template.content.cloneNode(true);
+<<<<<<< HEAD
     const imageNode = clone.querySelector('.product-image');
     const nameNode = clone.querySelector('.product-name');
     imageNode.src = item.image;
@@ -104,6 +105,15 @@ function renderProducts() {
     imageNode.addEventListener('click', showDetails);
     nameNode.addEventListener('click', showDetails);
     clone.querySelector('.detail-action').addEventListener('click', showDetails);
+=======
+    clone.querySelector('.product-image').src = item.image;
+    clone.querySelector('.product-image').alt = item.name;
+    clone.querySelector('.pill').textContent = item.category.toUpperCase();
+    clone.querySelector('.product-name').textContent = item.name;
+    clone.querySelector('.product-rating').textContent = stars(item.rating);
+    clone.querySelector('.product-price').textContent = money(item.price);
+    clone.querySelector('.stock').textContent = item.stock > 10 ? 'In Stock' : 'Only few left';
+>>>>>>> main
     clone.querySelector('.cart-action').addEventListener('click', () => addToCart(item.id));
     clone.querySelector('.buy-action').addEventListener('click', () => buyNow(item.id));
     productGrid.append(clone);
@@ -175,6 +185,7 @@ function openPanel(title, html) {
   sidePanel.classList.remove('hidden');
 }
 
+<<<<<<< HEAD
 async function renderProductDetail(productId) {
   try {
     const { product } = await api(`/api/products/${productId}`);
@@ -192,6 +203,8 @@ async function renderProductDetail(productId) {
   }
 }
 
+=======
+>>>>>>> main
 function renderCartPanel() {
   if (!state.cart.items.length) return openPanel('Your Cart', '<p>Your cart is empty.</p>');
 
@@ -231,7 +244,11 @@ async function startRazorpayPayment(checkout) {
         email: state.user?.email
       },
       notes: checkout.order.notes,
+<<<<<<< HEAD
       theme: { color: '#0071ce' },
+=======
+      theme: { color: '#2874f0' },
+>>>>>>> main
       handler(response) {
         resolve(response.razorpay_payment_id);
       },
@@ -268,7 +285,11 @@ function renderCheckout() {
       <input id="pinField" required placeholder="PIN Code"/>
       <button class="primary-btn" type="submit">Place Order</button>
     </form>
+<<<<<<< HEAD
     ${razorpayEnabled ? '<small>Razorpay enabled.</small>' : '<small>Set Razorpay env keys to enable real gateway popup.</small>'}
+=======
+    ${razorpayEnabled ? '<small>Razorpay gateway enabled via RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET.</small>' : '<small>Set Razorpay env keys to enable real gateway popup.</small>'}
+>>>>>>> main
   `);
 
   document.getElementById('payForm').addEventListener('submit', async e => {
@@ -409,6 +430,7 @@ function renderOrdersPanel() {
 
 function renderMenuInfo(view) {
   const views = {
+<<<<<<< HEAD
     home: `
       <p><strong>Home</strong>: Browse all departments, trend picks, and daily value products.</p>
       <ul>
@@ -465,6 +487,34 @@ function renderFeatureComparison() {
     </ul>
     <h3>Database Option</h3>
     <p>Current data store uses JSON file persistence. You can migrate this to MongoDB/PostgreSQL without changing the UI structure.</p>
+=======
+    home: '<p>Explore all categories and latest arrivals.</p>',
+    deals: '<p>Flash deals and heavy discounts updated regularly.</p>',
+    prime: '<p>Prime members get faster shipping and extra rewards.</p>',
+    customer: '<p>24x7 customer support and easy return center.</p>',
+    sell: '<p>Start selling on AFkart marketplace with low fees.</p>'
+  };
+  openPanel('AFkart Info', views[view]);
+}
+
+function renderFeatureComparison() {
+  openPanel('AFkart Feature Coverage', `
+    <p>This project covers major shopping flows with backend persistence and large seeded catalog.</p>
+    <h3>Included</h3>
+    <ul>
+      <li>User register/login/logout with backend sessions</li>
+      <li>Product browsing, filtering, sorting, search and pagination</li>
+      <li>Cart management, quantity updates, checkout and order history</li>
+      <li>Razorpay order creation endpoint and frontend checkout popup integration</li>
+    </ul>
+    <h3>Still Not Enterprise-Complete</h3>
+    <ul>
+      <li>Payment signature verification webhook and refund lifecycle automation</li>
+      <li>Production-grade delivery/logistics and returns workflows</li>
+      <li>Seller dashboards, admin panel, inventory/warehouse tooling</li>
+      <li>Advanced anti-fraud systems, notifications and recommendations</li>
+    </ul>
+>>>>>>> main
   `);
 }
 
@@ -492,7 +542,11 @@ document.getElementById('featureBtn').addEventListener('click', renderFeatureCom
 document.getElementById('cartBtn').addEventListener('click', renderCartPanel);
 document.getElementById('ordersBtn').addEventListener('click', renderOrdersPanel);
 document.getElementById('accountBtn').addEventListener('click', renderAuthPanel);
+<<<<<<< HEAD
 authBtn.addEventListener('click', () => (state.user ? logout() : renderAuthPanel()));
+=======
+authBtn.addEventListener('click', () => state.user ? logout() : renderAuthPanel());
+>>>>>>> main
 document.getElementById('closePanel').addEventListener('click', () => sidePanel.classList.add('hidden'));
 
 document.querySelectorAll('.menu-item').forEach(btn => btn.addEventListener('click', () => {
@@ -516,4 +570,7 @@ window.setQty = setQty;
 window.renderCheckout = renderCheckout;
 window.renderOrdersPanel = renderOrdersPanel;
 window.logout = logout;
+<<<<<<< HEAD
 window.addToCart = addToCart;
+=======
+>>>>>>> main
