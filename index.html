@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AFkart | Online Shopping</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   </head>
   <body>
     <header class="topbar">
@@ -50,6 +51,14 @@
       </div>
     </section>
 
+    <section class="feature-note">
+      <p>
+        AFkart is a full-stack <strong>demo marketplace</strong>. It includes core ecommerce flows,
+        now with Razorpay checkout support and large catalog seeding for realistic browsing.
+      </p>
+      <button id="featureBtn" class="muted-btn" type="button">View Included vs Missing Features</button>
+    </section>
+
     <section class="toolbar">
       <div class="chips" id="quickCategoryChips"></div>
       <div>
@@ -65,10 +74,17 @@
 
     <main>
       <section id="productGrid" class="product-grid"></section>
+      <section class="pagination" id="paginationControls"></section>
     </main>
 
     <footer class="footer">
       <p>© 2026 AFkart. Demo marketplace experience.</p>
+      <div class="social-links">
+        <a href="https://x.com/flipkart" target="_blank" rel="noreferrer">Flipkart on X</a>
+        <a href="https://www.instagram.com/flipkart/" target="_blank" rel="noreferrer">Flipkart on Instagram</a>
+        <a href="https://www.facebook.com/flipkart/" target="_blank" rel="noreferrer">Flipkart on Facebook</a>
+        <a href="https://www.youtube.com/user/flipkart" target="_blank" rel="noreferrer">Flipkart on YouTube</a>
+      </div>
     </footer>
 
     <aside id="sidePanel" class="side-panel hidden">

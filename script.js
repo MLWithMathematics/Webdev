@@ -4,37 +4,13 @@ const state = {
   filterCategory: 'all',
   query: '',
   sortBy: 'featured',
+  page: 1,
+  limit: 40,
+  totalPages: 1,
   products: [],
   cart: { items: [], subtotal: 0 },
-  orders: []
-const products = [
-  { id: 1, name: 'Noise Cancelling Headphones', category: 'electronics', price: 8999, rating: 4.6, stock: 18, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80' },
-  { id: 2, name: 'Smart LED TV 50"', category: 'electronics', price: 32999, rating: 4.3, stock: 5, image: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&q=80' },
-  { id: 3, name: 'Gaming Keyboard', category: 'electronics', price: 2799, rating: 4.4, stock: 22, image: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&w=600&q=80' },
-  { id: 4, name: '5G Smartphone Pro', category: 'mobiles', price: 44999, rating: 4.7, stock: 9, image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80' },
-  { id: 5, name: 'Budget Smartphone X', category: 'mobiles', price: 11999, rating: 4.1, stock: 31, image: 'https://images.unsplash.com/photo-1512499617640-c2f999098c01?auto=format&fit=crop&w=600&q=80' },
-  { id: 6, name: 'Wireless Power Bank', category: 'mobiles', price: 1699, rating: 4.2, stock: 27, image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80' },
-  { id: 7, name: 'Atomic Habits', category: 'books', price: 499, rating: 4.8, stock: 44, image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80' },
-  { id: 8, name: 'Clean Code', category: 'books', price: 699, rating: 4.7, stock: 17, image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=600&q=80' },
-  { id: 9, name: 'Kids Story Bundle', category: 'books', price: 899, rating: 4.5, stock: 13, image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80' },
-  { id: 10, name: 'Basmati Rice 10kg', category: 'groceries', price: 1199, rating: 4.4, stock: 62, image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80' },
-  { id: 11, name: 'Cold Pressed Oil', category: 'groceries', price: 349, rating: 4.3, stock: 48, image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80' },
-  { id: 12, name: 'Organic Fruit Box', category: 'groceries', price: 799, rating: 4.2, stock: 19, image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=600&q=80' },
-  { id: 13, name: 'Men Casual Shirt', category: 'fashion', price: 999, rating: 4.1, stock: 38, image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80' },
-  { id: 14, name: 'Women Sneakers', category: 'fashion', price: 2399, rating: 4.5, stock: 21, image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80' },
-  { id: 15, name: 'Smartwatch Fit+', category: 'electronics', price: 6999, rating: 4.6, stock: 14, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80' },
-  { id: 16, name: 'Bluetooth Speaker', category: 'electronics', price: 2499, rating: 4.3, stock: 35, image: 'https://images.unsplash.com/photo-1589003077984-894e133dabab?auto=format&fit=crop&w=600&q=80' },
-  { id: 17, name: 'Study Lamp', category: 'electronics', price: 1299, rating: 4.0, stock: 29, image: 'https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?auto=format&fit=crop&w=600&q=80' },
-  { id: 18, name: 'Instant Noodles Pack', category: 'groceries', price: 299, rating: 4.2, stock: 57, image: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=600&q=80' }
-];
-
-const state = {
-  user: JSON.parse(localStorage.getItem('afkartUser') || 'null'),
-  cart: JSON.parse(localStorage.getItem('afkartCart') || '[]'),
-  orders: JSON.parse(localStorage.getItem('afkartOrders') || '[]'),
-  filterCategory: 'all',
-  query: '',
-  sortBy: 'featured'
+  orders: [],
+  paymentConfig: { razorpayKeyId: null }
 };
 
 const productGrid = document.getElementById('productGrid');
@@ -47,6 +23,7 @@ const panelTitle = document.getElementById('panelTitle');
 const panelContent = document.getElementById('panelContent');
 const authBtn = document.getElementById('authBtn');
 const chipsNode = document.getElementById('quickCategoryChips');
+const paginationControls = document.getElementById('paginationControls');
 
 const money = value => `₹${value.toLocaleString('en-IN')}`;
 const stars = rating => `⭐ ${rating.toFixed(1)}`;
@@ -72,10 +49,6 @@ async function api(path, options = {}) {
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error || 'Request failed');
   return body;
-function persist() {
-  localStorage.setItem('afkartUser', JSON.stringify(state.user));
-  localStorage.setItem('afkartCart', JSON.stringify(state.cart));
-  localStorage.setItem('afkartOrders', JSON.stringify(state.orders));
 }
 
 function renderChips() {
@@ -86,20 +59,28 @@ function renderChips() {
     chip.textContent = category === 'all' ? 'All' : category[0].toUpperCase() + category.slice(1);
     chip.addEventListener('click', () => {
       state.filterCategory = category;
+      state.page = 1;
       categoryFilter.value = category;
       renderChips();
       loadProducts();
-      renderProducts();
     });
     chipsNode.append(chip);
   });
 }
 
 async function loadProducts() {
-  const params = new URLSearchParams({ category: state.filterCategory, q: state.query, sort: state.sortBy });
+  const params = new URLSearchParams({
+    category: state.filterCategory,
+    q: state.query,
+    sort: state.sortBy,
+    page: String(state.page),
+    limit: String(state.limit)
+  });
   const data = await api(`/api/products?${params.toString()}`);
   state.products = data.products;
+  state.totalPages = data.totalPages || 1;
   renderProducts();
+  renderPagination();
 }
 
 function renderProducts() {
@@ -107,17 +88,6 @@ function renderProducts() {
   productGrid.innerHTML = '';
 
   state.products.forEach(item => {
-  let filtered = products.filter(item => {
-    const categoryMatch = state.filterCategory === 'all' || item.category === state.filterCategory;
-    const queryMatch = item.name.toLowerCase().includes(state.query.toLowerCase());
-    return categoryMatch && queryMatch;
-  });
-
-  if (state.sortBy === 'priceLow') filtered.sort((a, b) => a.price - b.price);
-  if (state.sortBy === 'priceHigh') filtered.sort((a, b) => b.price - a.price);
-  if (state.sortBy === 'rating') filtered.sort((a, b) => b.rating - a.rating);
-
-  filtered.forEach(item => {
     const clone = template.content.cloneNode(true);
     clone.querySelector('.product-image').src = item.image;
     clone.querySelector('.product-image').alt = item.name;
@@ -132,6 +102,30 @@ function renderProducts() {
   });
 
   if (!state.products.length) productGrid.innerHTML = '<p>No results. Try another keyword.</p>';
+}
+
+function renderPagination() {
+  paginationControls.innerHTML = '';
+  if (state.totalPages <= 1) return;
+  const prev = document.createElement('button');
+  prev.textContent = 'Previous';
+  prev.disabled = state.page <= 1;
+  prev.addEventListener('click', () => {
+    state.page -= 1;
+    loadProducts();
+  });
+
+  const next = document.createElement('button');
+  next.textContent = 'Next';
+  next.disabled = state.page >= state.totalPages;
+  next.addEventListener('click', () => {
+    state.page += 1;
+    loadProducts();
+  });
+
+  const status = document.createElement('span');
+  status.textContent = `Page ${state.page} of ${state.totalPages}`;
+  paginationControls.append(prev, status, next);
 }
 
 function updateCartCount() {
@@ -164,28 +158,6 @@ async function setQty(productId, qty) {
     await api('/api/cart', { method: 'POST', body: JSON.stringify({ productId, qty }) });
   }
   await loadCart();
-  if (!filtered.length) productGrid.innerHTML = '<p>No results. Try another keyword.</p>';
-}
-
-function updateCartCount() {
-  cartCount.textContent = state.cart.reduce((sum, item) => sum + item.qty, 0);
-}
-
-function addToCart(productId) {
-  const line = state.cart.find(item => item.productId === productId);
-  if (line) line.qty += 1;
-  else state.cart.push({ productId, qty: 1 });
-  persist();
-  updateCartCount();
-}
-
-function setQty(productId, delta) {
-  const line = state.cart.find(item => item.productId === productId);
-  if (!line) return;
-  line.qty += delta;
-  if (line.qty <= 0) state.cart = state.cart.filter(i => i.productId !== productId);
-  persist();
-  updateCartCount();
   renderCartPanel();
 }
 
@@ -219,9 +191,41 @@ function renderCartPanel() {
   );
 }
 
+async function startRazorpayPayment(checkout) {
+  if (!window.Razorpay) throw new Error('Razorpay script failed to load.');
+  return new Promise((resolve, reject) => {
+    const rzp = new window.Razorpay({
+      key: checkout.keyId,
+      amount: checkout.order.amount,
+      currency: checkout.order.currency,
+      order_id: checkout.order.id,
+      name: 'AFkart',
+      description: 'Order Payment',
+      prefill: {
+        name: state.user?.name,
+        email: state.user?.email
+      },
+      notes: checkout.order.notes,
+      theme: { color: '#2874f0' },
+      handler(response) {
+        resolve(response.razorpay_payment_id);
+      },
+      modal: {
+        ondismiss() {
+          reject(new Error('Payment popup closed before completion'));
+        }
+      }
+    });
+    rzp.open();
+  });
+}
+
 function renderCheckout() {
   if (!state.token) return renderAuthPanel();
   if (!state.cart.items.length) return openPanel('Checkout', '<p>Your cart is empty.</p>');
+
+  const razorpayEnabled = Boolean(state.paymentConfig.razorpayKeyId);
+  const razorpayOption = razorpayEnabled ? '<option>Razorpay</option>' : '';
 
   openPanel('Checkout & Payment', `
     <p>Logged in as <strong>${state.user.name}</strong></p>
@@ -229,6 +233,7 @@ function renderCheckout() {
     <form id="payForm" class="form-grid">
       <select required>
         <option value="">Payment Method</option>
+        ${razorpayOption}
         <option>UPI</option>
         <option>Credit/Debit Card</option>
         <option>Net Banking</option>
@@ -238,70 +243,41 @@ function renderCheckout() {
       <input id="pinField" required placeholder="PIN Code"/>
       <button class="primary-btn" type="submit">Place Order</button>
     </form>
+    ${razorpayEnabled ? '<small>Razorpay gateway enabled via RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET.</small>' : '<small>Set Razorpay env keys to enable real gateway popup.</small>'}
   `);
 
   document.getElementById('payForm').addEventListener('submit', async e => {
     e.preventDefault();
+    const paymentMethod = e.target.querySelector('select').value;
+    const address = document.getElementById('addressField').value;
+    const pinCode = document.getElementById('pinField').value;
+
     try {
+      const payload = { paymentMethod, address, pinCode };
+      if (paymentMethod === 'Razorpay') {
+        const checkout = await api('/api/payments/razorpay/order', {
+          method: 'POST',
+          body: JSON.stringify({ amount: state.cart.subtotal })
+        });
+        payload.gatewayOrderId = checkout.order.id;
+        payload.paymentId = await startRazorpayPayment(checkout);
+      }
+
       await api('/api/orders/checkout', {
         method: 'POST',
-        body: JSON.stringify({
-          paymentMethod: e.target.querySelector('select').value,
-          address: document.getElementById('addressField').value,
-          pinCode: document.getElementById('pinField').value
-        })
+        body: JSON.stringify(payload)
       });
       await Promise.all([loadCart(), loadOrders()]);
       renderOrdersPanel();
     } catch (error) {
       alert(error.message);
     }
-  if (!state.cart.length) return openPanel('Your Cart', '<p>Your cart is empty.</p>');
-
-  const list = state.cart.map(item => {
-    const product = products.find(p => p.id === item.productId);
-    return `<div class="panel-list-item"><div><strong>${product.name}</strong><br>Qty: ${item.qty}</div><span>${money(product.price * item.qty)}</span><div><button class="muted-btn" onclick="setQty(${item.productId},-1)">-</button><button class="muted-btn" onclick="setQty(${item.productId},1)">+</button></div></div>`;
-  }).join('');
-
-  const subtotal = state.cart.reduce((sum, item) => {
-    const product = products.find(p => p.id === item.productId);
-    return sum + product.price * item.qty;
-  }, 0);
-
-  openPanel('Your Cart', `${list}<h3>Subtotal: ${money(subtotal)}</h3><button class="primary-btn" onclick="renderCheckout(${subtotal})">Proceed to Checkout</button>`);
-}
-
-function renderCheckout(subtotal) {
-  if (!state.user) {
-    alert('Please login first.');
-    return renderAuthPanel();
-  }
-
-  openPanel('Checkout & Payment', `<p>Logged in as <strong>${state.user.name}</strong></p><p>Total payable: <strong>${money(subtotal)}</strong></p><form id="payForm" class="form-grid"><select required><option value="">Payment Method</option><option>UPI</option><option>Credit/Debit Card</option><option>Net Banking</option><option>Cash on Delivery</option></select><input required placeholder="Shipping Address"/><input required placeholder="PIN Code"/><button class="primary-btn" type="submit">Place Order</button></form>`);
-
-  document.getElementById('payForm').addEventListener('submit', e => {
-    e.preventDefault();
-    state.orders.unshift({
-      id: `AFK-${Math.floor(Math.random() * 900000 + 100000)}`,
-      total: subtotal,
-      items: [...state.cart],
-      date: new Date().toLocaleString()
-    });
-    state.cart = [];
-    persist();
-    updateCartCount();
-    renderOrdersPanel();
   });
 }
 
 function buyNow(productId) {
   if (!state.token) return renderAuthPanel();
   setQty(productId, 1).then(() => renderCheckout());
-  state.cart = [{ productId, qty: 1 }];
-  persist();
-  updateCartCount();
-  const product = products.find(p => p.id === productId);
-  renderCheckout(product.price);
 }
 
 function renderAuthPanel() {
@@ -364,19 +340,6 @@ function renderAuthPanel() {
     } catch (error) {
       alert(error.message);
     }
-    return openPanel('Account', `<p><strong>${state.user.name}</strong></p><p>${state.user.email}</p><button class="primary-btn" onclick="renderOrdersPanel()">Your Orders</button><button class="muted-btn" onclick="logout()">Logout</button>`);
-  }
-
-  openPanel('Login / Signup', `<form id="loginForm" class="form-grid"><input id="nameField" required placeholder="Full Name"/><input id="mailField" required type="email" placeholder="Email"/><input required type="password" placeholder="Password"/><button class="primary-btn" type="submit">Continue</button></form>`);
-  document.getElementById('loginForm').addEventListener('submit', e => {
-    e.preventDefault();
-    state.user = {
-      name: document.getElementById('nameField').value,
-      email: document.getElementById('mailField').value
-    };
-    authBtn.textContent = 'Logout';
-    persist();
-    renderAuthPanel();
   });
 }
 
@@ -400,27 +363,22 @@ async function loadOrders() {
   state.orders = data.orders;
 }
 
-function renderOrdersPanel() {
-  if (!state.orders.length) return openPanel('Your Orders', '<p>No orders yet.</p>');
-
-  const html = state.orders.map(order => `
-    <div class="panel-list-item">
-      <div><strong>${order.id}</strong><br>${new Date(order.date).toLocaleString()}</div>
-      <span>${order.items.reduce((s, i) => s + i.qty, 0)} items</span>
-      <span>${money(order.total)}</span>
-    </div>
-  `).join('');
-
-  state.user = null;
-  authBtn.textContent = 'Login';
-  persist();
-  openPanel('Logged out', '<p>You have logged out of AFkart.</p>');
+async function loadConfig() {
+  const data = await api('/api/config');
+  state.paymentConfig = data.payment || { razorpayKeyId: null };
 }
 
 function renderOrdersPanel() {
   if (!state.orders.length) return openPanel('Your Orders', '<p>No orders yet.</p>');
 
-  const html = state.orders.map(order => `<div class="panel-list-item"><div><strong>${order.id}</strong><br>${order.date}</div><span>${order.items.reduce((s, i) => s + i.qty, 0)} items</span><span>${money(order.total)}</span></div>`).join('');
+  const html = state.orders.map(order => `
+    <div class="panel-list-item">
+      <div><strong>${order.id}</strong><br>${new Date(order.date).toLocaleString()}<br>${order.paymentMethod}${order.paymentId ? ` • ${order.paymentId}` : ''}</div>
+      <span>${order.items.reduce((s, i) => s + i.qty, 0)} items</span>
+      <span>${money(order.total)}</span>
+    </div>
+  `).join('');
+
   openPanel('Your Orders', html);
 }
 
@@ -435,24 +393,47 @@ function renderMenuInfo(view) {
   openPanel('AFkart Info', views[view]);
 }
 
+function renderFeatureComparison() {
+  openPanel('AFkart Feature Coverage', `
+    <p>This project covers major shopping flows with backend persistence and large seeded catalog.</p>
+    <h3>Included</h3>
+    <ul>
+      <li>User register/login/logout with backend sessions</li>
+      <li>Product browsing, filtering, sorting, search and pagination</li>
+      <li>Cart management, quantity updates, checkout and order history</li>
+      <li>Razorpay order creation endpoint and frontend checkout popup integration</li>
+    </ul>
+    <h3>Still Not Enterprise-Complete</h3>
+    <ul>
+      <li>Payment signature verification webhook and refund lifecycle automation</li>
+      <li>Production-grade delivery/logistics and returns workflows</li>
+      <li>Seller dashboards, admin panel, inventory/warehouse tooling</li>
+      <li>Advanced anti-fraud systems, notifications and recommendations</li>
+    </ul>
+  `);
+}
+
 categoryFilter.addEventListener('change', e => {
   state.filterCategory = e.target.value;
+  state.page = 1;
   renderChips();
   loadProducts();
 });
 searchInput.addEventListener('input', e => {
   state.query = e.target.value.trim();
+  state.page = 1;
   loadProducts();
 });
 sortSelect.addEventListener('change', e => {
   state.sortBy = e.target.value;
+  state.page = 1;
   loadProducts();
 });
-document.getElementById('searchBtn').addEventListener('click', loadProducts);
-categoryFilter.addEventListener('change', e => { state.filterCategory = e.target.value; renderChips(); renderProducts(); });
-searchInput.addEventListener('input', e => { state.query = e.target.value.trim(); renderProducts(); });
-sortSelect.addEventListener('change', e => { state.sortBy = e.target.value; renderProducts(); });
-document.getElementById('searchBtn').addEventListener('click', renderProducts);
+document.getElementById('searchBtn').addEventListener('click', () => {
+  state.page = 1;
+  loadProducts();
+});
+document.getElementById('featureBtn').addEventListener('click', renderFeatureComparison);
 document.getElementById('cartBtn').addEventListener('click', renderCartPanel);
 document.getElementById('ordersBtn').addEventListener('click', renderOrdersPanel);
 document.getElementById('accountBtn').addEventListener('click', renderAuthPanel);
@@ -468,16 +449,13 @@ document.querySelectorAll('.menu-item').forEach(btn => btn.addEventListener('cli
 async function bootstrap() {
   if (state.user) authBtn.textContent = 'Logout';
   renderChips();
+  await loadConfig();
   await loadProducts();
   await loadCart();
   await loadOrders();
 }
 
 bootstrap();
-if (state.user) authBtn.textContent = 'Logout';
-renderChips();
-renderProducts();
-updateCartCount();
 
 window.setQty = setQty;
 window.renderCheckout = renderCheckout;
