@@ -89,6 +89,23 @@ function renderProducts() {
 
   state.products.forEach(item => {
     const clone = template.content.cloneNode(true);
+<<<<<<< HEAD
+    const imageNode = clone.querySelector('.product-image');
+    const nameNode = clone.querySelector('.product-name');
+    imageNode.src = item.image;
+    imageNode.alt = item.name;
+    clone.querySelector('.pill').textContent = item.category.toUpperCase();
+    nameNode.textContent = item.name;
+    clone.querySelector('.product-description').textContent = item.description || 'No description available.';
+    clone.querySelector('.product-rating').textContent = stars(item.rating);
+    clone.querySelector('.product-price').textContent = money(item.price);
+    clone.querySelector('.stock').textContent = item.stock > 10 ? 'In Stock' : 'Only few left';
+
+    const showDetails = () => renderProductDetail(item.id);
+    imageNode.addEventListener('click', showDetails);
+    nameNode.addEventListener('click', showDetails);
+    clone.querySelector('.detail-action').addEventListener('click', showDetails);
+=======
     clone.querySelector('.product-image').src = item.image;
     clone.querySelector('.product-image').alt = item.name;
     clone.querySelector('.pill').textContent = item.category.toUpperCase();
@@ -96,6 +113,7 @@ function renderProducts() {
     clone.querySelector('.product-rating').textContent = stars(item.rating);
     clone.querySelector('.product-price').textContent = money(item.price);
     clone.querySelector('.stock').textContent = item.stock > 10 ? 'In Stock' : 'Only few left';
+>>>>>>> main
     clone.querySelector('.cart-action').addEventListener('click', () => addToCart(item.id));
     clone.querySelector('.buy-action').addEventListener('click', () => buyNow(item.id));
     productGrid.append(clone);
@@ -167,6 +185,26 @@ function openPanel(title, html) {
   sidePanel.classList.remove('hidden');
 }
 
+<<<<<<< HEAD
+async function renderProductDetail(productId) {
+  try {
+    const { product } = await api(`/api/products/${productId}`);
+    openPanel(product.name, `
+      <img src="${product.image}" alt="${product.name}" class="panel-image" />
+      <p><strong>Category:</strong> ${product.category}</p>
+      <p><strong>Rating:</strong> ${stars(product.rating)}</p>
+      <p><strong>Price:</strong> ${money(product.price)}</p>
+      <p><strong>Stock:</strong> ${product.stock}</p>
+      <p>${product.description}</p>
+      <button class="primary-btn" onclick="addToCart(${product.id})">Add to Cart</button>
+    `);
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+=======
+>>>>>>> main
 function renderCartPanel() {
   if (!state.cart.items.length) return openPanel('Your Cart', '<p>Your cart is empty.</p>');
 
@@ -206,7 +244,11 @@ async function startRazorpayPayment(checkout) {
         email: state.user?.email
       },
       notes: checkout.order.notes,
+<<<<<<< HEAD
+      theme: { color: '#0071ce' },
+=======
       theme: { color: '#2874f0' },
+>>>>>>> main
       handler(response) {
         resolve(response.razorpay_payment_id);
       },
@@ -243,7 +285,11 @@ function renderCheckout() {
       <input id="pinField" required placeholder="PIN Code"/>
       <button class="primary-btn" type="submit">Place Order</button>
     </form>
+<<<<<<< HEAD
+    ${razorpayEnabled ? '<small>Razorpay enabled.</small>' : '<small>Set Razorpay env keys to enable real gateway popup.</small>'}
+=======
     ${razorpayEnabled ? '<small>Razorpay gateway enabled via RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET.</small>' : '<small>Set Razorpay env keys to enable real gateway popup.</small>'}
+>>>>>>> main
   `);
 
   document.getElementById('payForm').addEventListener('submit', async e => {
@@ -384,6 +430,64 @@ function renderOrdersPanel() {
 
 function renderMenuInfo(view) {
   const views = {
+<<<<<<< HEAD
+    home: `
+      <p><strong>Home</strong>: Browse all departments, trend picks, and daily value products.</p>
+      <ul>
+        <li>Top categories with quick filters</li>
+        <li>Product descriptions, ratings, and detailed view</li>
+        <li>Secure account/cart/order experience</li>
+      </ul>
+    `,
+    deals: `
+      <p><strong>Deals</strong>: Promo-first experience inspired by major retail homepages.</p>
+      <ul>
+        <li>Sort by rating and price for best-value picks</li>
+        <li>Use search + category chips for faster discovery</li>
+        <li>Use pagination to explore a large catalog</li>
+      </ul>
+    `,
+    services: `
+      <p><strong>Services</strong>: Checkout, payment options, account session handling.</p>
+      <ul>
+        <li>Razorpay integrated checkout flow (when keys configured)</li>
+        <li>UPI / Card / Net Banking / COD demo methods</li>
+        <li>Order tracking history in account section</li>
+      </ul>
+    `,
+    support: `
+      <p><strong>Help Center</strong>: Support-oriented overview for shopper confidence.</p>
+      <ul>
+        <li>Easy returns messaging</li>
+        <li>Order and account quick access from top navigation</li>
+        <li>Social links for external brand channels</li>
+      </ul>
+    `,
+    sell: `
+      <p><strong>Become a Seller</strong>: Marketplace growth section.</p>
+      <ul>
+        <li>Large product catalog architecture ready</li>
+        <li>Search/sort/pagination for buyer discovery</li>
+        <li>Scalable backend JSON data model (can migrate to SQL/NoSQL DB)</li>
+      </ul>
+    `
+  };
+  openPanel('AFkart Section Details', views[view]);
+}
+
+function renderFeatureComparison() {
+  openPanel('AFkart Platform Details', `
+    <p>This demo now includes complete metadata coverage for products.</p>
+    <h3>Implemented</h3>
+    <ul>
+      <li>All products have images and descriptions</li>
+      <li>Product detail panel for every card</li>
+      <li>Detailed info on each nav section</li>
+      <li>Full account, cart, order, and gateway-ready checkout flow</li>
+    </ul>
+    <h3>Database Option</h3>
+    <p>Current data store uses JSON file persistence. You can migrate this to MongoDB/PostgreSQL without changing the UI structure.</p>
+=======
     home: '<p>Explore all categories and latest arrivals.</p>',
     deals: '<p>Flash deals and heavy discounts updated regularly.</p>',
     prime: '<p>Prime members get faster shipping and extra rewards.</p>',
@@ -410,6 +514,7 @@ function renderFeatureComparison() {
       <li>Seller dashboards, admin panel, inventory/warehouse tooling</li>
       <li>Advanced anti-fraud systems, notifications and recommendations</li>
     </ul>
+>>>>>>> main
   `);
 }
 
@@ -437,7 +542,11 @@ document.getElementById('featureBtn').addEventListener('click', renderFeatureCom
 document.getElementById('cartBtn').addEventListener('click', renderCartPanel);
 document.getElementById('ordersBtn').addEventListener('click', renderOrdersPanel);
 document.getElementById('accountBtn').addEventListener('click', renderAuthPanel);
+<<<<<<< HEAD
+authBtn.addEventListener('click', () => (state.user ? logout() : renderAuthPanel()));
+=======
 authBtn.addEventListener('click', () => state.user ? logout() : renderAuthPanel());
+>>>>>>> main
 document.getElementById('closePanel').addEventListener('click', () => sidePanel.classList.add('hidden'));
 
 document.querySelectorAll('.menu-item').forEach(btn => btn.addEventListener('click', () => {
@@ -461,3 +570,7 @@ window.setQty = setQty;
 window.renderCheckout = renderCheckout;
 window.renderOrdersPanel = renderOrdersPanel;
 window.logout = logout;
+<<<<<<< HEAD
+window.addToCart = addToCart;
+=======
+>>>>>>> main

@@ -47,6 +47,17 @@ const CATEGORY_IMAGES = {
   fashion: 'https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=600&q=80'
 };
 
+<<<<<<< HEAD
+const CATEGORY_DESCRIPTIONS = {
+  electronics: 'Latest tech essentials with verified ratings, reliable warranty, and doorstep delivery.',
+  mobiles: 'Smartphones for every budget with strong battery, camera, and performance experience.',
+  books: 'Curated reads for learning, exams, stories, and professional growth across age groups.',
+  groceries: 'Daily essentials sourced for freshness, value packs, and fast home delivery.',
+  fashion: 'Everyday and occasion fashion with modern fits, quality fabrics, and easy returns.'
+};
+
+=======
+>>>>>>> main
 function readStore() {
   const store = JSON.parse(fs.readFileSync(STORE_PATH, 'utf-8'));
   if (!store.sessions) store.sessions = {};
@@ -57,6 +68,19 @@ function writeStore(next) {
   fs.writeFileSync(STORE_PATH, JSON.stringify(next, null, 2));
 }
 
+<<<<<<< HEAD
+function buildDescription(category, name, index = 0) {
+  const suffixes = [
+    'Designed for everyday use with dependable quality.',
+    'Customer-favorite pick with solid value for money.',
+    'Popular choice with strong performance and durability.',
+    'Trusted by shoppers for quality and convenience.'
+  ];
+  return `${name}: ${CATEGORY_DESCRIPTIONS[category] || 'Quality product for everyday use.'} ${suffixes[index % suffixes.length]}`;
+}
+
+=======
+>>>>>>> main
 function ensureLargeCatalog() {
   const store = readStore();
   const counts = store.products.reduce((acc, p) => {
@@ -73,19 +97,45 @@ function ensureLargeCatalog() {
     const needed = Math.max(0, MIN_PRODUCTS_PER_CATEGORY - current);
     for (let i = 0; i < needed; i += 1) {
       const baseName = CATALOG_TEMPLATES[category][i % CATALOG_TEMPLATES[category].length];
+<<<<<<< HEAD
+      const productIndex = current + i + 1;
+      store.products.push({
+        id: nextId++,
+        name: `${baseName} ${productIndex}`,
+=======
       store.products.push({
         id: nextId++,
         name: `${baseName} ${current + i + 1}`,
+>>>>>>> main
         category,
         price: 199 + ((i * 37) % 25000),
         rating: Number((3.6 + ((i % 14) * 0.1)).toFixed(1)),
         stock: 10 + (i % 90),
+<<<<<<< HEAD
+        image: CATEGORY_IMAGES[category],
+        description: buildDescription(category, `${baseName} ${productIndex}`, i)
+=======
         image: CATEGORY_IMAGES[category]
+>>>>>>> main
       });
       changed = true;
     }
   });
 
+<<<<<<< HEAD
+  store.products.forEach((product, index) => {
+    if (!product.image) {
+      product.image = CATEGORY_IMAGES[product.category] || CATEGORY_IMAGES.electronics;
+      changed = true;
+    }
+    if (!product.description) {
+      product.description = buildDescription(product.category, product.name, index);
+      changed = true;
+    }
+  });
+
+=======
+>>>>>>> main
   if (changed) writeStore(store);
 }
 
@@ -251,6 +301,17 @@ async function handleApi(req, res, url) {
     return sendJson(res, 200, { categories });
   }
 
+<<<<<<< HEAD
+  if (method === 'GET' && pathname.startsWith('/api/products/')) {
+    const productId = Number(pathname.split('/').pop());
+    if (!productId) return sendJson(res, 400, { error: 'Invalid product id' });
+    const product = store.products.find(p => p.id === productId);
+    if (!product) return sendJson(res, 404, { error: 'Product not found' });
+    return sendJson(res, 200, { product });
+  }
+
+=======
+>>>>>>> main
   if (method === 'GET' && pathname === '/api/products') {
     const category = url.searchParams.get('category') || 'all';
     const q = (url.searchParams.get('q') || '').toLowerCase();
@@ -260,7 +321,12 @@ async function handleApi(req, res, url) {
 
     const filtered = store.products.filter(item => {
       const categoryMatch = category === 'all' || item.category === category;
+<<<<<<< HEAD
+      const haystack = `${item.name} ${item.description || ''}`.toLowerCase();
+      const queryMatch = haystack.includes(q);
+=======
       const queryMatch = item.name.toLowerCase().includes(q);
+>>>>>>> main
       return categoryMatch && queryMatch;
     });
 
